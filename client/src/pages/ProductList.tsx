@@ -55,6 +55,7 @@ const ProductList: React.FC = () => {
                 key={product.id}
                 className="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow"
               >
+                <img className="w-full h-40 object-cover rounded-md mb-4" />
                 <h2 className="text-xl font-bold text-gray-800 mb-2">
                   {product.name}
                 </h2>

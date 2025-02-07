@@ -32,7 +32,7 @@ router.get('/:id', (req, res) => {
 //   const newProduct: Product = {
 //     id: Date.now().toString(),
 //     name,
-//     price: parseFloat(price), // ✅ Convert price to a number
+//     price: parseFloat(price),
 //     description,
 //     category,
 //     bestseller,
