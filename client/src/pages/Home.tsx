@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 
@@ -10,28 +10,29 @@ interface Product {
 }
 
 const Home: React.FC = () => {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
 
-  const featuredProducts: Product[] = [
-    {
-      id: 1,
-      name: 'Car Cover',
-      price: 999,
-      imgSrc: 'https://via.placeholder.com/200',
-    },
-    {
-      id: 2,
-      name: 'Car Vacuum Cleaner',
-      price: 1299,
-      imgSrc: 'https://via.placeholder.com/200',
-    },
-    {
-      id: 3,
-      name: 'Alloy Wheels',
-      price: 7999,
-      imgSrc: 'https://via.placeholder.com/200',
-    },
-  ]
+  useEffect(() => {
+    fetch('http://localhost:5001/api/products/best')
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch products')
+        }
+        return res.json()
+      })
+      .then((data) => {
+        setProducts(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error('Error fetching products:', err)
+        setError(err.message)
+        setLoading(false)
+      })
+  })
 
   return (
     <div>
@@ -71,37 +72,48 @@ const Home: React.FC = () => {
           transition={{ duration: 0.8 }}
           className="text-2xl font-bold text-gray-800 text-center mb-6"
         >
-          Featured Products
+          Best Sellers
         </motion.h2>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {featuredProducts.map((product) => (
-            <motion.div
-              key={product.id}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-white border border-gray-200 rounded-lg p-6 shadow-md transition-all"
-            >
-              <img
-                src={product.imgSrc}
-                alt={product.name}
-                className="mb-4 w-full h-48 object-cover rounded-lg"
-              />
-              <h3 className="text-lg font-semibold text-gray-800">
-                {product.name}
-              </h3>
-              <p className="text-blue-600 font-bold text-lg">
-                ₹{product.price}
-              </p>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+        {loading ? (
+          <p className="text-center text-gray-500 text-lg">
+            Loading products...
+          </p>
+        ) : error ? (
+          <p className="text-center text-red-500 text-lg">Error: {error}</p>
+        ) : products.length === 0 ? (
+          <p className="text-center text-gray-500 text-lg">
+            No products available.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {products.map((product) => (
+              <motion.div
+                key={product.id}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="bg-white border border-gray-200 rounded-lg p-6 shadow-md transition-all"
               >
-                Buy Now
-              </motion.button>
-            </motion.div>
-          ))}
-        </div>
+                <img
+                  src={product.imgSrc}
+                  alt={product.name}
+                  className="mb-4 w-full h-48 object-cover rounded-lg"
+                />
+                <h3 className="text-lg font-semibold text-gray-800">
+                  {product.name}
+                </h3>
+                <p className="text-blue-600 font-bold text-lg">
+                  ₹{product.price}
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  className="mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition"
+                >
+                  Buy Now
+                </motion.button>
+              </motion.div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   )

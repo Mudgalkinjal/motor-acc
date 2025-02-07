@@ -6,6 +6,7 @@ export interface Product {
   price: number
   description: string
   category: string
+  bestseller: boolean
 }
 
 export let products: Product[] = []
@@ -19,6 +20,7 @@ spareParts.forEach((category) => {
       price: parseFloat((Math.random() * 100).toFixed(2)),
       description: part.description,
       category: category.main_type,
+      bestseller: part.bestseller || false,
     })
   })
 })
