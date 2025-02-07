@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 interface CartItem {
   productId: number
@@ -8,6 +9,7 @@ interface CartItem {
 }
 
 const Cart: React.FC = () => {
+  const navigate = useNavigate()
   const cartItems: CartItem[] = [
     { productId: 1, name: 'Car Cover', price: 999, quantity: 2 },
     { productId: 2, name: 'Car Vacuum Cleaner', price: 1299, quantity: 1 },
@@ -17,6 +19,10 @@ const Cart: React.FC = () => {
     (sum, item) => sum + item.price * item.quantity,
     0
   )
+
+  const handleSubmit = () => {
+    navigate('/checkout')
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-10">
@@ -58,7 +64,10 @@ const Cart: React.FC = () => {
               <p className="text-2xl font-bold text-green-600">₹{total}</p>
             </div>
 
-            <button className="w-full mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-transform transform hover:scale-105 shadow-md">
+            <button
+              onClick={handleSubmit}
+              className="w-full mt-6 bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-transform transform hover:scale-105 shadow-md"
+            >
               Proceed to Checkout
             </button>
           </div>

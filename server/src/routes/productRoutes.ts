@@ -19,6 +19,7 @@ router.post('/', (req, res) => {
     name: req.body.name,
     price: req.body.price,
     description: req.body.description,
+    category: req.body.category,
   }
   products.push(newProduct)
   res.status(201).json(newProduct)

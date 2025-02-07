@@ -9,12 +9,26 @@ interface Product {
 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('http://localhost:5001/api/products')
-      .then((res) => res.json())
-      .then((data) => setProducts(data))
-      .catch((err) => console.error(err))
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch products')
+        }
+        return res.json()
+      })
+      .then((data) => {
+        setProducts(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error('Error fetching products:', err)
+        setError(err.message)
+        setLoading(false)
+      })
   }, [])
 
   return (
@@ -24,7 +38,13 @@ const ProductList: React.FC = () => {
           Explore Our Products
         </h1>
 
-        {products.length === 0 ? (
+        {loading ? (
+          <p className="text-center text-gray-500 text-lg">
+            Loading products...
+          </p>
+        ) : error ? (
+          <p className="text-center text-red-500 text-lg">Error: {error}</p>
+        ) : products.length === 0 ? (
           <p className="text-center text-gray-500 text-lg">
             No products available.
           </p>
